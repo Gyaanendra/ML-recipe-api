@@ -9,3 +9,5 @@ bcrypt
 uuid
 gunicorn
 en-core-web-sm
+subprocess
+sys

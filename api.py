@@ -16,7 +16,23 @@ warnings.filterwarnings("ignore")
 app = Flask(__name__)
 
 # Load the SpaCy model
-nlp = spacy.load("en_core_web_sm")
+# Check if SpaCy is installed, and install the model
+try:
+    # Load the SpaCy model
+    nlp = spacy.load("en_core_web_sm")
+    print("Model 'en_core_web_sm' is already installed.")
+except OSError:
+    # If the model is not found, install it
+    import subprocess
+    import sys
+
+    def install_model(model):
+        """Download a SpaCy model."""
+        subprocess.check_call([sys.executable, "-m", "spacy", "download", model])
+
+    # Install the model
+    install_model("en_core_web_sm")
+    print("Installation of 'en_core_web_sm' complete!")
 
 
 def preprocess_text(text):
@@ -24,7 +40,6 @@ def preprocess_text(text):
     doc = nlp(text)
     tokens = [token.text for token in doc if not token.is_stop and not token.is_punct]
     return ' '.join(tokens)
-
 
 
 connection_url = os.environ['DATABASE']
