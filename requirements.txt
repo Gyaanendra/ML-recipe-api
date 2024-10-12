@@ -7,3 +7,4 @@ SQLAlchemy
 spacy
 bcrypt
 uuid
+unicorn
