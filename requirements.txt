@@ -8,3 +8,4 @@ spacy
 bcrypt
 uuid
 gunicorn
+psycopg2
