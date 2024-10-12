@@ -1,0 +1,9 @@
+Flask
+pandas
+numpy
+nltk
+scikit-learn
+SQLAlchemy
+spacy
+bcrypt
+uuid
