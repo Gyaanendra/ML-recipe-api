@@ -8,3 +8,4 @@ spacy
 bcrypt
 uuid
 gunicorn
+en-core-web-sm
