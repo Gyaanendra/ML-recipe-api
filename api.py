@@ -11,6 +11,7 @@ import bcrypt
 import uuid
 import re
 import os
+import json
 warnings.filterwarnings("ignore")
 
 app = Flask(__name__)
@@ -64,21 +65,37 @@ def recommend_recipes(user_ingredients, user_prep_time, user_cook_time, top_n=10
 
 @app.route('/api/display_recipe', methods=['GET'])
 def display_recipe():
-    recipes = rdf[[
-        'TranslatedRecipeName',
-        'TranslatedIngredients',
-        'PrepTimeInMins',
-        'CookTimeInMins',
-        'TotalTimeInMins',
-        'Servings',
-        'Cuisine',
-        'Course',
-        'Diet',
-        'TranslatedInstructions',
-        'image_src',
-        'unique_id'
-    ]].to_dict(orient='records')
-    return jsonify(recipes)
+    try:
+        recipes = rdf[[
+            'TranslatedRecipeName',
+            'TranslatedIngredients',
+            'PrepTimeInMins',
+            'CookTimeInMins',
+            'TotalTimeInMins',
+            'Servings',
+            'Cuisine',
+            'Course',
+            'Diet',
+            'TranslatedInstructions',
+            'image_src',
+            'unique_id'
+        ]].to_dict(orient='records')
+        
+        # Convert numpy int64 and float64 to Python int and float
+        for recipe in recipes:
+            for key, value in recipe.items():
+                if isinstance(value, np.int64):
+                    recipe[key] = int(value)
+                elif isinstance(value, np.float64):
+                    recipe[key] = float(value)
+        
+        # Ensure all data is JSON serializable
+        json_compatible_recipes = json.loads(json.dumps(recipes, default=str))
+        
+        return jsonify(json_compatible_recipes)
+    except Exception as e:
+        app.logger.error(f"Error in display_recipe: {str(e)}")
+        return jsonify({"error": "An error occurred while fetching recipes"}), 500
 
 @app.route('/api/recommendation', methods=['POST'])
 def recommendation():
