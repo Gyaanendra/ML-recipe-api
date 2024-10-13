@@ -30,8 +30,7 @@ def preprocess_text(text):
 connection_url = os.environ['DATABASE']
 engine = create_engine(connection_url)
 
-# Load the data from the PostgreSQL database
-rdf = pd.read_sql("SELECT * FROM recipe_data", engine)
+rdf = pd.read_csv('https://raw.githubusercontent.com/Gyaanendra/gfg-hackfest/refs/heads/main/data/postgres_data.csv')
 
 # Replace NaN values with an empty string and translate TranslatedInstructions
 rdf['CleanedIngredients'] = rdf['CleanedIngredients'].fillna('')
