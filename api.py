@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pandas as pd
 import numpy as np
 import warnings
@@ -12,12 +13,23 @@ import uuid
 import re
 import os
 import json
+import random
 warnings.filterwarnings("ignore")
-
+import config
 app = Flask(__name__)
-
+CORS(app)
 # Load the SpaCy model
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (np.integer, np.floating, np.bool_)):
+            return obj.item()
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif pd.isna(obj):
+            return None
+        return super(CustomJSONEncoder, self).default(obj)
 
+app.json_encoder = CustomJSONEncoder
 nlp = spacy.load("en_core_web_sm")
 
 
@@ -66,7 +78,10 @@ def recommend_recipes(user_ingredients, user_prep_time, user_cook_time, top_n=10
 @app.route('/api/display_recipe', methods=['GET'])
 def display_recipe():
     try:
-        recipes = rdf[[
+        # Randomly sample 50 recipes
+        recipes_sample = rdf.sample(n=min(50, len(rdf)), random_state=random.randint(0, 10000))
+        
+        recipes = recipes_sample[[  # Select the relevant columns
             'TranslatedRecipeName',
             'TranslatedIngredients',
             'PrepTimeInMins',
