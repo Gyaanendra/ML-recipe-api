@@ -15,7 +15,7 @@ import os
 import json
 import random
 warnings.filterwarnings("ignore")
-import config
+
 app = Flask(__name__)
 CORS(app)
 # Load the SpaCy model
