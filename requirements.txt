@@ -9,3 +9,4 @@ bcrypt
 uuid
 gunicorn
 psycopg2
+Flask-Cors
