@@ -15,6 +15,7 @@ import os
 import json
 import random
 warnings.filterwarnings("ignore")
+import config 
 
 app = Flask(__name__)
 CORS(app)
@@ -72,14 +73,14 @@ def calculate_similarity(user_ingredients, user_prep_time, user_cook_time):
 def recommend_recipes(user_ingredients, user_prep_time, user_cook_time, top_n=10):
     combined_similarity = calculate_similarity(user_ingredients, user_prep_time, user_cook_time)
     sorted_indices = combined_similarity.argsort()[::-1]
-    top_recommendations = rdf.iloc[sorted_indices[:top_n]].copy()
+    top_recommendations = rdf.iloc[sorted_indices].copy()
     return top_recommendations
 
 @app.route('/api/display_recipe', methods=['GET'])
 def display_recipe():
     try:
         # Randomly sample 50 recipes
-        recipes_sample = rdf.sample(n=min(50, len(rdf)), random_state=random.randint(0, 10000))
+        recipes_sample = rdf.sample(n=210, random_state=random.randint(0, 10000))
         
         recipes = recipes_sample[[  # Select the relevant columns
             'TranslatedRecipeName',
